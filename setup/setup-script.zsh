@@ -128,13 +128,42 @@ end tell
 EOF
 echo "✅ Anpassung der Favoriten abgeschlossen"
 
-# 📦 Führe Brewfile aus, falls vorhanden (angepasst auf relative Pfadangabe im Repository)
+# 📦 Auswahl des brewfiles je nach Kontext (private oder work)
+
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-BREWFILE_PATH="$SCRIPT_DIR/Brew/Brewfile"
+
+echo ""
+echo "🔍 Wähle aus, welches brewfile du ausführen möchtest:"
+PS3="👉 Deine Wahl (Zahl eingeben): "
+
+options=("Privat" "Arbeit" "Abbrechen")
+
+select opt in "${options[@]}"; do
+  case $opt in
+    "Privat")
+      BREWFILE_PATH="$SCRIPT_DIR/brew/brewfile.private"
+      break
+      ;;
+    "Arbeit")
+      BREWFILE_PATH="$SCRIPT_DIR/brew/brewfile.work"
+      break
+      ;;
+    "Abbrechen")
+      echo "🚫 Auswahl abgebrochen. Kein brewfile wird ausgeführt."
+      exit 0
+      ;;
+    *)
+      echo "❌ Ungültige Eingabe. Bitte 1, 2 oder 3 wählen."
+      ;;
+  esac
+done
+
+# ✅ brewfile ausführen, wenn vorhanden
 if [ -f "$BREWFILE_PATH" ]; then
-  echo "📦 Brewfile gefunden unter $BREWFILE_PATH – führe 'brew bundle' aus..."
+  echo "📦 brewfile gewählt: $BREWFILE_PATH"
   brew bundle --file="$BREWFILE_PATH"
-  echo "✅ Brewfile erfolgreich ausgeführt."
+  echo "✅ brewfile erfolgreich ausgeführt."
 else
-  echo "ℹ️ Kein Brewfile unter $BREWFILE_PATH gefunden. Du kannst später eines erstellen."
+  echo "❌ Das gewählte brewfile wurde nicht gefunden: $BREWFILE_PATH"
+  exit 1
 fi
