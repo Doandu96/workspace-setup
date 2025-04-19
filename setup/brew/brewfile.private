@@ -1,1 +1,55 @@
-//
+# Zusätzliche Repositories (für Hersteller-Software)
+tap "homebrew/cask"
+tap "homebrew/cask-drivers"
+
+# GUI-Anwendungen (Casks)
+cask "visual-studio-code"
+cask "google-chrome"
+cask "microsoft-edge"
+cask "whatsapp"
+cask "logi-options-plus"
+
+# CLI-Tools
+brew "git"
+
+# VS Code Erweiterungen
+# ---------- Taps ----------
+tap "homebrew/cask"
+tap "homebrew/cask-drivers"
+
+# ---------- Casks ----------
+cask "visual-studio-code"
+cask "google-chrome"
+cask "microsoft-edge"
+cask "whatsapp"
+cask "logi-options-plus"
+
+# ---------- CLI Tools ----------
+brew "git"
+
+
+# ---------- VS Code Extensions ----------
+vscode "esbenp.prettier-vscode"                   # Code-Formatter
+vscode "dbaeumer.vscode-eslint"                   # ESLint für JS/TS
+vscode "angular.ng-template"                      # Angular Language Service
+vscode "johnpapa.angular2"                        # Angular Snippets
+vscode "bradlc.vscode-tailwindcss"                # Tailwind IntelliSense
+vscode "eamodio.gitlens"                          # GitLens
+vscode "gruntfuggly.todo-tree"                    # TODO/FIXME-Erkennung
+vscode "ryuta46.multi-command"                    # Makros aus Kommandos
+vscode "christian-kohler.npm-intellisense"        # Auto-Importe
+vscode "ihuke.devserver"                          # Lokaler Devserver
+vscode "pkief.material-icon-theme"                # Datei-Icons
+vscode "ms-vscode.makefile-tools"                 # Makefile-Support
+vscode "redhat.vscode-xml"                        # XML
+vscode "redhat.vscode-yaml"                       # YAML
+vscode "a-h.templ"                                # Go templ Engine
+vscode "golang.go"                                # Go Language Support
+vscode "neverik.go-critic"                        # Go Codeanalyse
+vscode "github.copilot"                           # GitHub Copilot
+vscode "github.copilot-chat"                      # Copilot Chat
+vscode "visualstudioexptteam.vscodeintellicode"   # KI-Autovervollständigung
+vscode "visualstudioexptteam.intellicode-api-usage-examples"
+vscode "docker.docker"                            # Docker Integration
+vscode "vscodevim.vim"                            # Vim Mode
+
