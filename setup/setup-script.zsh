@@ -1,4 +1,5 @@
 #!/bin/zsh
+emulate -L zsh
 
 # 🔐 Prüfe PAM-Konfiguration für sudo_local
 if grep -q "^auth" /etc/pam.d/sudo_local 2>/dev/null; then
@@ -60,103 +61,32 @@ echo "🔄 .zshrc neu geladen"
 # ✅ Fertig
 echo "🎉 Homebrew ist nun so konfiguriert, dass es im Benutzerkontext installiert"
 
-echo "🔄 Anpassung der Favoriten:"
-
-# Zielordner, der zur Finder-Seitenleiste hinzugefügt werden soll
-# "~/Applications" ist oft ein benutzerdefinierter Ordner für Apps, die nicht systemweit installiert sind
-# Der Pfad wird hier absolut und ohne Symlinks aufgelöst, um Vergleichsprobleme zu vermeiden
-resolved_target_folder=$(cd "$HOME/Applications" && pwd -P)
-
-# Wenn der Ordner nicht existiert, Skript mit Fehler verlassen
-if [[ ! -d "$resolved_target_folder" ]]; then
-  echo "[Fehler] Der Ordner $resolved_target_folder existiert nicht."
-  exit 1
-fi
-
-echo "[Info] Zielordner existiert: $resolved_target_folder"
-echo "[Info] Prüfe, ob der Ordner in der Finder-Seitenleiste enthalten ist..."
-
-# Aufruf von AppleScript über osascript, um mit dem Finder zu interagieren
-osascript <<EOF
--- AppleScript beginnt hier
-
-set logPrefix to "[AppleScript] "
-
-tell application "Finder"
-    -- Zielordner als Alias setzen
-    set targetFolder to POSIX file "$resolved_target_folder" as alias
-
-    try
-        -- Liste der aktuellen Favoriten-Objekte abrufen
-        set sidebarItems to every item of sidebar list "favorites"
-
-        -- Prüfen, ob der Zielordner bereits in den Favoriten enthalten ist
-        set alreadyExists to false
-        set normalizedTargetPath to "$resolved_target_folder/"
-
-        repeat with i from 1 to count of sidebarItems
-            set currentItem to item i of sidebarItems
-            try
-                -- Pfad jedes Favoriten-Eintrags holen
-                set itemPath to POSIX path of (URL of currentItem as text)
-                if itemPath is equal to normalizedTargetPath then
-                    set alreadyExists to true
-                    exit repeat
-                end if
-            end try
-        end repeat
-
-        if alreadyExists then
-            do shell script "echo '[Info] Ordner ist bereits in der Finder-Seitenleiste enthalten.'"
-        else
-            do shell script "echo '[Info] Ordner wird zur Finder-Seitenleiste hinzugefügt.'"
-            -- Ordner im Finder öffnen – das kann helfen, ihn automatisch zur Seitenleiste hinzuzufügen
-            open targetFolder
-            delay 0.5
-            set targetWin to front window
-            set sidebarList to sidebar width of targetWin
-            do shell script "echo '[Erfolg] Ordner wurde hinzugefügt (indirekt über Öffnen im Finder).'"
-        end if
-
-    on error errMsg
-        -- Fehleranzeige im Dialog und auch Logging über Konsole
-        do shell script "echo '[Fehler] AppleScript: ' & quoted form of errMsg"
-        display dialog "Fehler: " & errMsg buttons {"OK"}
-    end try
-end tell
-
-EOF
-echo "✅ Anpassung der Favoriten abgeschlossen"
-
 # 📦 Auswahl des brewfiles je nach Kontext (private oder work)
-
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo ""
 echo "🔍 Wähle aus, welches brewfile du ausführen möchtest:"
-PS3="👉 Deine Wahl (Zahl eingeben): "
+echo "1) Privat"
+echo "2) Arbeit"
+echo "3) Abbrechen"
+read "opt?👉 Deine Wahl (1-3): "
 
-options=("Privat" "Arbeit" "Abbrechen")
-
-select opt in "${options[@]}"; do
-  case $opt in
-    "Privat")
-      BREWFILE_PATH="$SCRIPT_DIR/brew/brewfile.private"
-      break
-      ;;
-    "Arbeit")
-      BREWFILE_PATH="$SCRIPT_DIR/brew/brewfile.work"
-      break
-      ;;
-    "Abbrechen")
-      echo "🚫 Auswahl abgebrochen. Kein brewfile wird ausgeführt."
-      exit 0
-      ;;
-    *)
-      echo "❌ Ungültige Eingabe. Bitte 1, 2 oder 3 wählen."
-      ;;
-  esac
-done
+case $opt in
+  1)
+    BREWFILE_PATH="$SCRIPT_DIR/brew/brewfile.private"
+    ;;
+  2)
+    BREWFILE_PATH="$SCRIPT_DIR/brew/brewfile.work"
+    ;;
+  3)
+    echo "🚫 Auswahl abgebrochen. Kein brewfile wird ausgeführt."
+    exit 0
+    ;;
+  *)
+    echo "❌ Ungültige Eingabe. Breche ab."
+    exit 1
+    ;;
+esac
 
 # ✅ brewfile ausführen, wenn vorhanden
 if [ -f "$BREWFILE_PATH" ]; then
@@ -168,41 +98,52 @@ else
   exit 1
 fi
 
-
 # ───────────────────────────────────────────────
 # 📦 OPTIONAL: Globale Tools installieren?
 # ───────────────────────────────────────────────
 echo ""
 echo "🌐 Möchtest du zusätzlich globale Tools installieren?"
-PS3="👉 Deine Wahl (Zahl eingeben): "
-global_options=("Ja" "Nein")
+echo "1) Ja"
+echo "2) Nein"
+read "gopt?👉 Deine Wahl (1-2): "
 
-select gopt in "${global_options[@]}"; do
-  case $gopt in
-    "Ja")
-      GLOBAL_BREWFILE_PATH="$SCRIPT_DIR/brew/brewfile.global"
-      if [ -f "$GLOBAL_BREWFILE_PATH" ]; then
-        echo "🌐 Führe globales brewfile aus: $GLOBAL_BREWFILE_PATH"
+case $gopt in
+  1)
+    GLOBAL_BREWFILE_PATH="$SCRIPT_DIR/brew/brewfile.global"
+    if [ -f "$GLOBAL_BREWFILE_PATH" ]; then
+      echo "🌐 Führe globales brewfile aus: $GLOBAL_BREWFILE_PATH"
 
-        # 🔧 Temporär Umgebungsvariablen deaktivieren für systemweite Installation
-        unset HOMEBREW_PREFIX
-        unset HOMEBREW_CELLAR
-        unset HOMEBREW_CASK_OPTS
+      # 🔧 Temporär Umgebungsvariablen deaktivieren für systemweite Installation
+      unset HOMEBREW_PREFIX
+      unset HOMEBREW_CELLAR
+      unset HOMEBREW_CASK_OPTS
 
-        echo "⚠️  Achtung: Für globale Casks kann sudo erforderlich sein..."
-        brew bundle --file="$GLOBAL_BREWFILE_PATH"
-        echo "✅ Globales Brewfile erfolgreich ausgeführt."
-      else
-        echo "❌ brewfile.global nicht gefunden unter $GLOBAL_BREWFILE_PATH"
-      fi
-      break
-      ;;
-    "Nein")
-      echo "⏩ Überspringe globale Tools."
-      break
-      ;;
-    *)
-      echo "❌ Ungültige Eingabe. Bitte 1 oder 2 wählen."
-      ;;
-  esac
+      echo "⚠️  Achtung: Für globale Casks kann sudo erforderlich sein..."
+      brew bundle --file="$GLOBAL_BREWFILE_PATH"
+      echo "✅ Globales Brewfile erfolgreich ausgeführt."
+    else
+      echo "❌ brewfile.global nicht gefunden unter $GLOBAL_BREWFILE_PATH"
+    fi
+    ;;
+  2)
+    echo "⏩ Überspringe globale Tools."
+    ;;
+  *)
+    echo "❌ Ungültige Eingabe. Breche ab."
+    exit 1
+    ;;
+esac
+
+# 📂 Öffne Finder und erinnere an manuelles Hinzufügen zu Favoriten
+echo ""
+echo "ℹ️ Der Ordner '$HOME/Applications' wird gleich im Finder geöffnet."
+echo "👉 Du kannst ihn danach manuell per Drag & Drop zur Finder-Seitenleiste hinzufügen."
+
+# Countdown vor Öffnen
+for i in {10..1}; do
+  echo "⏳ Ordner öffnet sich in $i Sekunden..."
+  sleep 1
 done
+
+open "$HOME/Applications"
+echo "✅ Finder geöffnet."
