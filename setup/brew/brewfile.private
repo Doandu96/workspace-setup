@@ -4,13 +4,8 @@ tap "homebrew/cask-drivers"
 
 # GUI-Anwendungen (Casks)
 cask "visual-studio-code"
-cask "google-chrome"
-cask "microsoft-edge"
-cask "whatsapp"
-cask "logi-options-plus"
 
 # CLI-Tools
-brew "git"
 
 # VS Code Erweiterungen
 # ---------- Taps ----------
