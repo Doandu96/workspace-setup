@@ -4,12 +4,10 @@ tap "homebrew/cask-drivers"
 
 # ---------- Casks ----------
 cask "visual-studio-code"
-cask "google-chrome"
-cask "microsoft-edge"
-cask "logi-options-plus"
+
 
 # ---------- CLI Tools ----------
-brew "git"
+# for installation: brew "appname"
 
 # ---------- VS Code Extensions ----------
 vscode "esbenp.prettier-vscode"
