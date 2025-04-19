@@ -1,7 +1,3 @@
-# Zusätzliche Repositories (für Hersteller-Software)
-tap "homebrew/cask"
-tap "homebrew/cask-drivers"
-
 # GUI-Anwendungen (Casks)
 cask "visual-studio-code"
 
