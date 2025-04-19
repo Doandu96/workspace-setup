@@ -1,0 +1,15 @@
+# brewfile.global – für systemweite (globale) Tools
+
+# Offizielle Taps
+tap "homebrew/cask"
+
+# Casks (werden systemweit nach /Applications installiert)
+cask "bentobox"      # Fenster-Management für macOS
+cask "google-chrome"
+cask "microsoft-edge"
+cask "whatsapp"
+cask "logi-options-plus"
+
+# CLI-Tools, systemweit
+brew "git"
+brew "tree"
