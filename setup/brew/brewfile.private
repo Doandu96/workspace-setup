@@ -6,6 +6,8 @@ tap "homebrew/cask-drivers"
 cask "visual-studio-code"
 
 # CLI-Tools
+# for installation: brew "appname"
+
 
 # VS Code Erweiterungen
 # ---------- Taps ----------
