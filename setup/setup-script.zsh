@@ -167,3 +167,42 @@ else
   echo "❌ Das gewählte brewfile wurde nicht gefunden: $BREWFILE_PATH"
   exit 1
 fi
+
+
+# ───────────────────────────────────────────────
+# 📦 OPTIONAL: Globale Tools installieren?
+# ───────────────────────────────────────────────
+echo ""
+echo "🌐 Möchtest du zusätzlich globale Tools installieren?"
+PS3="👉 Deine Wahl (Zahl eingeben): "
+global_options=("Ja" "Nein")
+
+select gopt in "${global_options[@]}"; do
+  case $gopt in
+    "Ja")
+      GLOBAL_BREWFILE_PATH="$SCRIPT_DIR/brew/brewfile.global"
+      if [ -f "$GLOBAL_BREWFILE_PATH" ]; then
+        echo "🌐 Führe globales brewfile aus: $GLOBAL_BREWFILE_PATH"
+
+        # 🔧 Temporär Umgebungsvariablen deaktivieren für systemweite Installation
+        unset HOMEBREW_PREFIX
+        unset HOMEBREW_CELLAR
+        unset HOMEBREW_CASK_OPTS
+
+        echo "⚠️  Achtung: Für globale Casks kann sudo erforderlich sein..."
+        brew bundle --file="$GLOBAL_BREWFILE_PATH"
+        echo "✅ Globales Brewfile erfolgreich ausgeführt."
+      else
+        echo "❌ brewfile.global nicht gefunden unter $GLOBAL_BREWFILE_PATH"
+      fi
+      break
+      ;;
+    "Nein")
+      echo "⏩ Überspringe globale Tools."
+      break
+      ;;
+    *)
+      echo "❌ Ungültige Eingabe. Bitte 1 oder 2 wählen."
+      ;;
+  esac
+done
