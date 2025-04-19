@@ -1,1 +1,41 @@
-//
+# ---------- Taps ----------
+tap "homebrew/cask"
+tap "homebrew/cask-drivers"
+
+# ---------- Casks ----------
+cask "visual-studio-code"
+cask "google-chrome"
+cask "microsoft-edge"
+cask "logi-options-plus"
+
+# ---------- CLI Tools ----------
+brew "git"
+
+# ---------- VS Code Extensions ----------
+vscode "esbenp.prettier-vscode"
+vscode "dbaeumer.vscode-eslint"
+vscode "angular.ng-template"
+vscode "johnpapa.angular2"
+vscode "nrwl.angular-console"
+vscode "bradlc.vscode-tailwindcss"
+vscode "eamodio.gitlens"
+vscode "gruntfuggly.todo-tree"
+vscode "ryuta46.multi-command"
+vscode "christian-kohler.npm-intellisense"
+vscode "ihuke.devserver"
+vscode "pkief.material-icon-theme"
+vscode "ms-vscode.makefile-tools"
+vscode "redhat.vscode-xml"
+vscode "redhat.vscode-yaml"
+vscode "42crunch.vscode-openapi"
+vscode "a-h.templ"
+vscode "golang.go"
+vscode "neverik.go-critic"
+vscode "github.copilot"
+vscode "github.copilot-chat"
+vscode "visualstudioexptteam.vscodeintellicode"
+vscode "visualstudioexptteam.intellicode-api-usage-examples"
+vscode "docker.docker"
+vscode "ms-kubernetes-tools.vscode-kubernetes-tools"
+vscode "miragon-gmbh.vs-code-bpmn-modeler"
+vscode "vscodevim.vim"
