@@ -1,7 +1,7 @@
 # brewfile.global – für systemweite (globale) Tools
 
-# Offizielle Taps
-tap "homebrew/cask"
+tap "homebrew/cask-versions"
+tap "homebrew/services"
 
 # Casks (werden systemweit nach /Applications installiert)
 cask "bentobox"      # Fenster-Management für macOS
