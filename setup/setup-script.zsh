@@ -86,7 +86,8 @@ if [ ! -x "$BREW_BIN" ]; then
   export NONINTERACTIVE=1
   export CI=1
   export HOMEBREW_PREFIX="$BREW_PREFIX"
-  export PATH="$HOMEBREW_PREFIX/bin:$PATH"
+  export PATH="$BREW_PREFIX/bin:$PATH"
+  export HOMEBREW_INSTALL_FROM_API=1
 
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
