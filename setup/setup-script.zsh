@@ -2,6 +2,7 @@
 set -euo pipefail
 
 echo "🚨 Sicherheitsmodus aktiv: Skript bricht bei Fehlern oder undefinierten Variablen sofort ab."
+
 # Hilfsfunktion für sichere Eingabe mit Default
 safe_read() {
   local __resultvar=$1
@@ -9,10 +10,9 @@ safe_read() {
   local __default=$3
 
   read "?$__prompt" input || input="$__default"
-  input="${input:-$__default}"  # fallback wenn leer
+  input="${input:-$__default}"
   eval "$__resultvar=\"\$input\""
 }
-
 
 # 🔐 Prüfe PAM-Konfiguration für sudo_local
 if grep -q "^auth" /etc/pam.d/sudo_local 2>/dev/null; then
@@ -38,7 +38,7 @@ if [ -n "$GLOBAL_BREW_BIN" ]; then
   echo "❓ Möchtest du die globale Installation entfernen?"
   echo "1) Ja, bitte deinstallieren"
   echo "2) Nein, behalten"
-  safe_read "gopt?👉 Deine Wahl (1-2): "
+  safe_read gopt "👉 Deine Wahl (1-2): " "2"
 
   case $gopt in
     1)
@@ -116,7 +116,7 @@ echo "🔍 Wähle aus, welches brewfile du ausführen möchtest:"
 echo "1) Privat"
 echo "2) Arbeit"
 echo "3) Abbrechen"
-safe_read "opt?👉 Deine Wahl (1-3): "
+safe_read opt "👉 Deine Wahl (1-3): " "3"
 
 case $opt in
   1)
@@ -150,7 +150,7 @@ echo ""
 echo "🌐 Möchtest du zusätzlich globale Tools installieren?"
 echo "1) Ja"
 echo "2) Nein"
-safe_read "gopt?👉 Deine Wahl (1-2): "
+safe_read gopt "👉 Deine Wahl (1-2): " "2"
 
 case $gopt in
   1)
