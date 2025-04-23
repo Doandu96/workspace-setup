@@ -89,7 +89,8 @@ if [ ! -x "$BREW_BIN" ]; then
   export PATH="$BREW_PREFIX/bin:$PATH"
   export HOMEBREW_INSTALL_FROM_API=1
 
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  export SUDO_ASKPASS=/bin/false
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" </dev/null
 
   echo "✅ Homebrew wurde im Benutzerkontext installiert."
 else
