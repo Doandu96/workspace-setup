@@ -8,7 +8,6 @@ if ! sudo -v; then
 fi
 
 # 🔁 Halte sudo aktiv solange das Skript läuft
-# (dies verhindert, dass nach 5 Minuten erneut nach dem Passwort gefragt wird)
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
 echo "🚨 Sicherheitsmodus aktiv: Skript bricht bei Fehlern oder undefinierten Variablen sofort ab."
@@ -48,7 +47,7 @@ if [ -n "$GLOBAL_BREW_BIN" ]; then
   echo "❓ Möchtest du die globale Installation entfernen?"
   echo "1) Ja, bitte deinstallieren"
   echo "2) Nein, behalten"
-  safe_read gopt "👉 Deine Wahl (1-2): " "2"
+  safe_read gopt "🔍 Deine Wahl (1-2): " "2"
 
   case $gopt in
     1)
@@ -83,14 +82,21 @@ if [ ! -x "$BREW_BIN" ]; then
   echo "❌ Homebrew ist im Benutzerkontext NICHT installiert."
   echo "🚀 Starte Installation von Homebrew im Benutzerverzeichnis..."
 
+  rm -rf "$BREW_PREFIX"  # vorher sicherstellen, dass kein kaputter Versuch existiert
+
   export NONINTERACTIVE=1
   export CI=1
   export HOMEBREW_PREFIX="$BREW_PREFIX"
-  export PATH="$BREW_PREFIX/bin:$PATH"
   export HOMEBREW_INSTALL_FROM_API=1
-
+  export PATH="$HOMEBREW_PREFIX/bin:$PATH"
   export SUDO_ASKPASS=/bin/false
+
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" </dev/null
+
+  if [ ! -x "$BREW_BIN" ]; then
+    echo "❌ Homebrew konnte nicht korrekt im Benutzerkontext installiert werden."
+    exit 1
+  fi
 
   echo "✅ Homebrew wurde im Benutzerkontext installiert."
 else
@@ -117,7 +123,6 @@ else
   echo "ℹ️ Homebrew-Umgebungsvariablen sind bereits in der .zshrc vorhanden."
 fi
 
-# 🌀 Quelle die Datei, damit die Änderungen im aktuellen Terminal gelten
 source "$ZSHRC"
 echo "🔄 .zshrc neu geladen"
 
@@ -131,23 +136,12 @@ echo "3) Abbrechen"
 safe_read opt "👉 Deine Wahl (1-3): " "3"
 
 case $opt in
-  1)
-    BREWFILE_PATH="$SCRIPT_DIR/brew/brewfile.private"
-    ;;
-  2)
-    BREWFILE_PATH="$SCRIPT_DIR/brew/brewfile.work"
-    ;;
-  3)
-    echo "🚫 Auswahl abgebrochen. Kein brewfile wird ausgeführt."
-    exit 0
-    ;;
-  *)
-    echo "❌ Ungültige Eingabe. Breche ab."
-    exit 1
-    ;;
+  1) BREWFILE_PATH="$SCRIPT_DIR/brew/brewfile.private" ;;
+  2) BREWFILE_PATH="$SCRIPT_DIR/brew/brewfile.work" ;;
+  3) echo "🚫 Auswahl abgebrochen. Kein brewfile wird ausgeführt." ; exit 0 ;;
+  *) echo "❌ Ungültige Eingabe. Breche ab." ; exit 1 ;;
 esac
 
-# ✅ brewfile ausführen (nur User-Brew verwenden!)
 if [ -f "$BREWFILE_PATH" ]; then
   echo "📦 brewfile gewählt: $BREWFILE_PATH"
   "$BREW_BIN" bundle --file="$BREWFILE_PATH"
