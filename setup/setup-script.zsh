@@ -1,6 +1,16 @@
 #!/bin/zsh
 set -euo pipefail
 
+# ⏳ Hole sudo-Rechte, um spätere sudo-Aufrufe zu vermeiden
+if ! sudo -v; then
+  echo "🚫 sudo wurde abgelehnt oder abgebrochen – Skript wird beendet."
+  exit 1
+fi
+
+# 🔁 Halte sudo aktiv solange das Skript läuft
+# (dies verhindert, dass nach 5 Minuten erneut nach dem Passwort gefragt wird)
+while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+
 echo "🚨 Sicherheitsmodus aktiv: Skript bricht bei Fehlern oder undefinierten Variablen sofort ab."
 
 # Hilfsfunktion für sichere Eingabe mit Default
